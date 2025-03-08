@@ -142,7 +142,9 @@ class SoftController(uiAssets: UiAssets, layout: SoftControllerLayout, index: In
         }
     }
 
-    private fun getLayout(layouts: List<String?>, index: Int): String? = if (layouts.size >= index) {
+    // TODO: fix
+    // private fun getLayout(layouts: List<String?>, index: Int): String? = if (layouts.size >= index) {
+    private fun getLayout(layouts: List<String?>, index: Int): String? = if (layouts.size > index) {
         layouts[index]
     } else {
         Gdx.app.error(TAG, "Tried to use layout ${index}, but there are only ${layouts.size} available. Defaulting to 0.")
@@ -642,6 +644,58 @@ class TempestSoftController: SoftControllerLayout() {
     object Buttons {
         const val MOVE_CLOCKWISE = "move_clockwise"
         const val MOVE_COUNTER_CLOCKWISE = "move_counter_clockwise"
+        const val FIRE = "fire"
+    }
+
+}
+
+class GradiusSoftController: SoftControllerLayout() {
+
+    override fun getButtons() = listOf(
+        ButtonDefinition(
+            Buttons.LEFT,
+            { sprites -> sprites.buttonIcons.left },
+            Input.Keys.LEFT,
+            { ContinuousPressButton() },
+        ),
+        ButtonDefinition(
+            Buttons.RIGHT,
+            { sprites -> sprites.buttonIcons.right },
+            Input.Keys.RIGHT,
+            { ContinuousPressButton() },
+        ),
+        ButtonDefinition(
+            Buttons.UP,
+            { sprites -> sprites.buttonIcons.up },
+            Input.Keys.UP,
+            { ContinuousPressButton() },
+        ),
+        ButtonDefinition(
+            Buttons.DOWN,
+            { sprites -> sprites.buttonIcons.down },
+            Input.Keys.DOWN,
+            { ContinuousPressButton() },
+        ),
+        ButtonDefinition(
+            Buttons.FIRE,
+            { sprites -> sprites.buttonIcons.fire },
+            Input.Keys.SPACE,
+            { SingleShotButton() },
+        ),
+    )
+
+    override fun getLayouts() = listOf(
+        """
+        [ fire ][      ][    ][    ][  fire ]
+        [ left ][ down ][<-->][ up ][ right ]
+        """,
+    )
+
+    object Buttons {
+        const val LEFT = "left"
+        const val RIGHT = "right"
+        const val UP = "up"
+        const val DOWN = "down"
         const val FIRE = "fire"
     }
 
