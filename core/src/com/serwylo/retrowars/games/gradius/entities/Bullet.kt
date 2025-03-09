@@ -15,7 +15,7 @@ class Bullet(
         0f, 6f,
         5f, 6f,
         5f, 0f,
-        0f, 0f
+        0f, 0f,
     ))
     private var position: Vector2 = initialPosition.cpy()
     private val velocity: Vector2 = Vector2(100f, 0f)

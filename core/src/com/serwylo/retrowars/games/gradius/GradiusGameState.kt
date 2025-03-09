@@ -10,7 +10,7 @@ import java.util.Queue
 class GradiusGameState(worldWidth: Float, worldHeight: Float) {
 
     companion object {
-        public const val MAX_BULLETS = 10
+        const val MAX_BULLETS = 50
     }
 
     val ship: Ship = Ship(Vector2(worldWidth/3, worldHeight/2))

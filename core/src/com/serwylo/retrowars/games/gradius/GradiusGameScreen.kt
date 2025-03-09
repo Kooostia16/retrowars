@@ -9,6 +9,7 @@ import com.serwylo.retrowars.games.Games
 import com.serwylo.retrowars.games.gradius.entities.Bullet
 import com.serwylo.retrowars.games.gradius.entities.Colliding
 import com.serwylo.retrowars.games.gradius.entities.Enemy
+import com.serwylo.retrowars.games.gradius.entities.FollowingEnemy
 import com.serwylo.retrowars.input.GradiusSoftController
 
 class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 400f, 250f) {
@@ -52,12 +53,19 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
         }
 
         state.enemies.forEach {
-            it.update(delta)
+            it.update(delta, state.ship.position)
         }
 
         if (timer <= 0) {
-            state.enemies.add(Enemy(Vector2(viewport.worldWidth + 10, (Math.random() * viewport.worldHeight).toFloat())))
-            timer = 5f
+            val enemyInitPosition = Vector2(viewport.worldWidth + 10, (Math.random() * viewport.worldHeight).toFloat())
+            state.enemies.add(
+                when (Math.random()) {
+                    in 0f..0.1f -> Enemy(enemyInitPosition)
+                    in 0.1f..1.0f -> FollowingEnemy(enemyInitPosition)
+                    else -> Enemy(Vector2(viewport.worldWidth + 10, (Math.random() * viewport.worldHeight).toFloat()))
+                }
+            )
+            timer = 2f
         }
 
         state.enemies.removeAll(Enemy::isDestroyed)
