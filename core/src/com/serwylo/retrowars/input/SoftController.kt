@@ -682,12 +682,22 @@ class GradiusSoftController: SoftControllerLayout() {
             Input.Keys.SPACE,
             { SingleShotButton() },
         ),
+        ButtonDefinition(
+            Buttons.SECONDARY,
+            { sprites -> sprites.buttonIcons.thrust },
+            Input.Keys.Z,
+            { SingleShotButton() },
+        ),
     )
 
     override fun getLayouts() = listOf(
         """
-        [ fire ][      ][    ][    ][  fire ]
-        [ left ][ down ][<-->][ up ][ right ]
+        [ right][  up  ][    ][    ][  fire ]
+        [ left ][ down ][<-->][    ][   s   ]
+        """,
+        """
+        [   s  ][      ][    ][    ][   fire    ]
+        [ left ][ down ][<-->][ up ][   right   ]
         """,
     )
 
@@ -697,6 +707,7 @@ class GradiusSoftController: SoftControllerLayout() {
         const val UP = "up"
         const val DOWN = "down"
         const val FIRE = "fire"
+        const val SECONDARY = "s"
     }
 
 }

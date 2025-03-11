@@ -1,8 +1,8 @@
 package com.serwylo.retrowars.games.gradius.entities
 
-import com.badlogic.gdx.math.Polygon
+import com.badlogic.gdx.math.Rectangle
 
 interface Colliding {
-    fun getBoundingCircle(): Polygon
+    fun getBoundingRectangle(): Rectangle
     fun collidesWith(other: Colliding): Boolean
 }
