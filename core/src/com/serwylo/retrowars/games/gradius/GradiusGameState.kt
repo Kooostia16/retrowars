@@ -19,9 +19,13 @@ class GradiusGameState(worldWidth: Float, worldHeight: Float) {
     val enemies: LinkedList<Enemy> = LinkedList()
     val powerups: LinkedList<Item> = LinkedList()
 
-//    val powerUpVelocityMod = 0f
     var powerUpRocket = false
     var powerUpDouble = false
+
+    var powerUpRocketTime = 1f
+    var powerUpDoubleTime = 1f
+
+    var powerUpIndex = 0
 
     var isBasicFire: Boolean = true
 }

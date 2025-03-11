@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 
 class Bullet(
-    initialPosition: Vector2
+    initialPosition: Vector2,
+    initialVelocity: Vector2 = Vector2(100f, 0f),
 ): Colliding {
 
     private val shape: Polygon = Polygon(floatArrayOf(
@@ -21,7 +22,7 @@ class Bullet(
         shape.boundingRectangle
     }
     private var position: Vector2 = initialPosition.cpy()
-    private val velocity: Vector2 = Vector2(100f, 0f)
+    private val velocity: Vector2 = initialVelocity.cpy()
 
     var isDestroyed: Boolean = false
         private set
@@ -30,7 +31,7 @@ class Bullet(
 
     override fun collidesWith(other: Colliding): Boolean = collisionShape.overlaps(other.getBoundingRectangle())
 
-    private fun isOutsideView(worldWidth: Int): Boolean {
+    fun isOutsideView(worldWidth: Int): Boolean {
         return position.x > worldWidth
     }
 
@@ -46,16 +47,14 @@ class Bullet(
         }
     }
 
-    fun destroy() {
-        isDestroyed = true
-    }
-
-    fun update(delta: Float, worldWidth: Int) {
+    fun update(delta: Float, worldHeight: Int) {
         position = position.mulAdd(velocity, delta)
         collisionShape.setPosition(position.x, position.y)
 
-        if (isOutsideView(worldWidth)) {
-            isDestroyed = true
+        if (position.y - 3 > worldHeight) {
+            position.y -= velocity.y * delta
+            velocity.y = 0f
         }
+
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.serwylo.retrowars.RetrowarsGame
 import com.serwylo.retrowars.games.GameScreen
 import com.serwylo.retrowars.games.Games
@@ -19,7 +20,7 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
     private val livesAndPowerupContainer = HorizontalGroup().apply { space(UI_SPACE) }
 
     init {
-        addGameOverlayToHUD(livesAndPowerupContainer)
+        addGameScoreToHUD(livesAndPowerupContainer)
     }
 
     override fun getSoundLibrary() = sounds
@@ -45,8 +46,18 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
             state.isBasicFire = true
         }
 
-        state.bullets.forEach {bullet ->
-            bullet.update(delta, viewport.worldWidth.toInt())
+        if (controller.trigger(GradiusSoftController.Buttons.SECONDARY)) {
+            powerUp()
+        }
+
+        val bulletsIt = state.bullets.iterator()
+
+        while (bulletsIt.hasNext()) {
+            val bullet = bulletsIt.next()
+            bullet.update(delta, viewport.worldHeight.toInt())
+            if (bullet.isOutsideView(viewport.worldWidth.toInt())) {
+                bulletsIt.remove()
+            }
         }
 
         val enemiesIt = state.enemies.iterator()
@@ -64,6 +75,7 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
                     state.powerups.add(Item(enemy.position))
                     bulletsIt.remove()
                     enemiesIt.remove()
+                    break
                 }
             }
 
@@ -78,6 +90,7 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
             val powerUp = powerupsIt.next()
             powerUp.update(delta, state.ship.position)
             if (powerUp.collidesWith(state.ship)) {
+                increasePowerUp()
                 powerupsIt.remove()
             }
         }
@@ -92,6 +105,14 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
                 }
             )
             timer = 2f
+        }
+
+        if (state.powerUpDouble) {
+            state.powerUpDoubleTime -= delta
+        }
+
+        if (state.powerUpRocket) {
+            state.powerUpRocketTime -= delta
         }
     }
 
@@ -116,6 +137,61 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
 
     }
 
+    fun powerUp() {
+        when (state.powerUpIndex) {
+            0 ->  state.ship.velocityMod += 0.5f
+            1 -> updateIndexIfPowerUp(1)
+            2 -> updateIndexIfPowerUp(2)
+            else -> return
+        }
+
+        state.powerUpIndex = -1
+
+        updatePowerUpHud()
+    }
+
+    fun updateIndexIfPowerUp(index: Int) {
+        if (index == 1 && !state.powerUpDouble) {
+            state.powerUpDouble = true
+        } else if (index == 2 && !state.powerUpRocket) {
+            state.powerUpRocket = true
+        }
+    }
+
+    fun increasePowerUp() {
+        var updatedIndex = state.powerUpIndex + 1
+
+        if (updatedIndex == 1 && state.powerUpDouble) {
+            updatedIndex += 1
+        }
+        if (updatedIndex == 2 && state.powerUpRocket) {
+            updatedIndex += 1
+        }
+
+        state.powerUpIndex = updatedIndex
+
+        if (state.powerUpIndex > 2) {
+            state.powerUpIndex = 0
+        }
+
+        updatePowerUpHud()
+    }
+
+    fun updatePowerUpHud() {
+        val powerups = listOf(false, state.powerUpDouble, state.powerUpRocket)
+
+        livesAndPowerupContainer.clear()
+        for (i in 0..2) {
+            var powerUpNumber = (i + 1).toString()
+            if (powerups[i]) {
+                powerUpNumber = "0"
+            } else if (state.powerUpIndex == i) {
+                powerUpNumber += "'"
+            }
+            livesAndPowerupContainer.addActor(Label(powerUpNumber, game.uiAssets.getStyles().label.large))
+        }
+    }
+
     override fun show() {
         Gdx.input.inputProcessor = getInputProcessor()
     }
@@ -123,6 +199,21 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
     fun fireBasic() {
         if (state.isBasicFire && state.bullets.size < GradiusGameState.MAX_BULLETS) {
             state.bullets.add(Bullet(state.ship.position.cpy().add(state.ship.bulletBasicOffset)))
+
+            if (state.powerUpDouble) {
+                if (state.powerUpDoubleTime <= 0) {
+                    state.bullets.add(Bullet(state.ship.position.cpy().add(state.ship.bulletBasicOffset), Vector2(100f, 50f)))
+                    state.powerUpDoubleTime = 1f
+                }
+            }
+
+            if (state.powerUpRocket) {
+                if (state.powerUpRocketTime <= 0) {
+                    state.bullets.add(Bullet(state.ship.position.cpy().add(state.ship.bulletBasicOffset), Vector2(100f, -50f)))
+                    state.powerUpRocketTime = 1f
+                }
+            }
+
             state.isBasicFire = false
         }
     }
