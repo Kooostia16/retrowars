@@ -138,12 +138,7 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
     }
 
     fun powerUp() {
-        when (state.powerUpIndex) {
-            0 ->  state.ship.velocityMod += 0.5f
-            1 -> updateIndexIfPowerUp(1)
-            2 -> updateIndexIfPowerUp(2)
-            else -> return
-        }
+        updateIndexIfPowerUp(state.powerUpIndex)
 
         state.powerUpIndex = -1
 
@@ -151,7 +146,9 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
     }
 
     fun updateIndexIfPowerUp(index: Int) {
-        if (index == 1 && !state.powerUpDouble) {
+        if (index == 0 && state.ship.velocityMod < 2f) {
+            state.ship.velocityMod += 0.5f
+        } else if (index == 1 && !state.powerUpDouble) {
             state.powerUpDouble = true
         } else if (index == 2 && !state.powerUpRocket) {
             state.powerUpRocket = true
@@ -159,26 +156,27 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
     }
 
     fun increasePowerUp() {
-        var updatedIndex = state.powerUpIndex + 1
+        val powerups = listOf(
+            if (state.ship.velocityMod < 2f) 0 else -1,
+            if (state.powerUpDouble) -1 else 1,
+            if (state.powerUpRocket) -1 else 2
+        ).filter { it != -1 }
 
-        if (updatedIndex == 1 && state.powerUpDouble) {
-            updatedIndex += 1
+        val currentIndex = powerups.indexOf(state.powerUpIndex)
+
+        if (currentIndex < powerups.size - 1) {
+            state.powerUpIndex = powerups[currentIndex + 1]
         }
-        if (updatedIndex == 2 && state.powerUpRocket) {
-            updatedIndex += 1
-        }
 
-        state.powerUpIndex = updatedIndex
-
-        if (state.powerUpIndex > 2) {
-            state.powerUpIndex = 0
+        if (powerups.isEmpty()) {
+            increaseScore(100)
         }
 
         updatePowerUpHud()
     }
 
     fun updatePowerUpHud() {
-        val powerups = listOf(false, state.powerUpDouble, state.powerUpRocket)
+        val powerups = listOf(state.ship.velocityMod > 1.5f, state.powerUpDouble, state.powerUpRocket)
 
         livesAndPowerupContainer.clear()
         for (i in 0..2) {
@@ -203,7 +201,7 @@ class GradiusGameScreen(game: RetrowarsGame) : GameScreen(game, Games.gradius, 4
             if (state.powerUpDouble) {
                 if (state.powerUpDoubleTime <= 0) {
                     state.bullets.add(Bullet(state.ship.position.cpy().add(state.ship.bulletBasicOffset), Vector2(100f, 50f)))
-                    state.powerUpDoubleTime = 1f
+                    state.powerUpDoubleTime = 0.5f
                 }
             }
 
