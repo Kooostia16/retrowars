@@ -6,15 +6,15 @@ import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 
-class Bullet(
+open class Bullet(
     initialPosition: Vector2,
     initialVelocity: Vector2 = Vector2(100f, 0f),
-): Colliding {
+): Colliding() {
 
     private val shape: Polygon = Polygon(floatArrayOf(
         0f, 0f,
-        0f, 6f,
-        5f, 6f,
+        0f, 2f,
+        5f, 2f,
         5f, 0f,
         0f, 0f,
     ))
@@ -24,34 +24,27 @@ class Bullet(
     private var position: Vector2 = initialPosition.cpy()
     private val velocity: Vector2 = initialVelocity.cpy()
 
-    var isDestroyed: Boolean = false
-        private set
-
     override fun getBoundingRectangle(): Rectangle = collisionShape
-
-    override fun collidesWith(other: Colliding): Boolean = collisionShape.overlaps(other.getBoundingRectangle())
 
     fun isOutsideView(worldWidth: Int): Boolean {
         return position.x > worldWidth
     }
 
     fun render(camera: Camera, r: ShapeRenderer) {
-        if (!isDestroyed) {
-            r.projectionMatrix = camera.combined
-            r.begin(ShapeRenderer.ShapeType.Line)
-            r.identity()
-            r.translate(position.x, position.y, 0f)
-            r.polygon(shape.vertices)
-            r.end()
-            r.identity()
-        }
+//        r.projectionMatrix = camera.combined
+//        r.begin(ShapeRenderer.ShapeType.Line)
+        r.identity()
+        r.translate(position.x, position.y, 0f)
+        r.polygon(shape.vertices)
+//        r.end()
+//        r.identity()
     }
 
-    fun update(delta: Float, worldHeight: Int) {
+    fun update(delta: Float) {
         position = position.mulAdd(velocity, delta)
         collisionShape.setPosition(position.x, position.y)
 
-        if (position.y - 3 > worldHeight) {
+        if (position.y - collisionShape.height < 0) {
             position.y -= velocity.y * delta
             velocity.y = 0f
         }

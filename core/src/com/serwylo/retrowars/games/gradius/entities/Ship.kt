@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.sign
 
-class Ship(initialPosition: Vector2): Colliding {
+class Ship(initialPosition: Vector2): Colliding() {
 
     companion object {
         const val VELOCITY = 80f
@@ -38,8 +38,6 @@ class Ship(initialPosition: Vector2): Colliding {
 
     override fun getBoundingRectangle(): Rectangle = collisionShape
 
-    override fun collidesWith(other: Colliding): Boolean = collisionShape.overlaps(other.getBoundingRectangle())
-
     fun setVelocityButtonsState(up: Boolean, down: Boolean, right: Boolean, left: Boolean) {
         val hor = (if (right) 1f else 0f) - (if (left) 1f else 0f)
         val ver = (if (up) 1f else 0f) - (if (down) 1f else 0f)
@@ -48,16 +46,16 @@ class Ship(initialPosition: Vector2): Colliding {
     }
 
     fun render(camera: Camera, r: ShapeRenderer) {
-        r.projectionMatrix = camera.combined
-        r.begin(ShapeRenderer.ShapeType.Line)
+//        r.projectionMatrix = camera.combined
+//        r.begin(ShapeRenderer.ShapeType.Line)
         r.identity()
         r.translate(position.x, position.y, 0.0f)
         r.polygon(shape.vertices)
         fireShape.vertices[2] = -10f + (Math.random() * 2f).toFloat() - sign(velocity.x) * 2f
         fireShape.vertices[3] = 4f + (Math.random() * 2f).toFloat()
         r.polygon(fireShape.vertices)
-        r.end()
-        r.identity()
+//        r.end()
+//        r.identity()
     }
 
     fun update(delta: Float) {

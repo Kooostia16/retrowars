@@ -11,7 +11,7 @@ import kotlin.math.sign
 class FollowingEnemy(
     initialPosition: Vector2,
     playerPosition: Vector2,
-): Enemy(initialPosition) {
+): Enemy(initialPosition, 0f) {
 
     companion object {
         const val FOLLOW_TIME_DELAY = 2f
@@ -36,8 +36,8 @@ class FollowingEnemy(
 
     override fun render(camera: Camera, r: ShapeRenderer) {
         val playerOffset = position.y - playerPosition.y
-        r.projectionMatrix = camera.combined
-        r.begin(ShapeRenderer.ShapeType.Line)
+//        r.projectionMatrix = camera.combined
+//        r.begin(ShapeRenderer.ShapeType.Line)
         r.identity()
         r.translate(position.x, position.y, 0f)
         if (followTimer > 0 && abs(playerOffset) > 0.5f) {
@@ -47,8 +47,8 @@ class FollowingEnemy(
         //TODO remove, was used for debug
 //        r.identity()
 //        r.rect(collisionShape.x, collisionShape.y, collisionShape.width, collisionShape.height)
-        r.end()
-        r.identity()
+//        r.end()
+//        r.identity()
     }
 
     override fun update(delta: Float, playerPosition: Vector2) {

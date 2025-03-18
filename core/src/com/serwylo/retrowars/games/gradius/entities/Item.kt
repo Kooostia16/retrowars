@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2
 
 open class Item(
     initialPosition: Vector2
-): Colliding {
+): Colliding() {
 
     protected open val shape: Polygon = Polygon(floatArrayOf(
         0f, 0f,
@@ -32,11 +32,9 @@ open class Item(
 
     override fun getBoundingRectangle(): Rectangle = collisionShape
 
-    override fun collidesWith(other: Colliding): Boolean = collisionShape.overlaps(other.getBoundingRectangle())
-
     open fun render(camera: Camera, r: ShapeRenderer) {
-        r.projectionMatrix = camera.combined
-        r.begin(ShapeRenderer.ShapeType.Line)
+//        r.projectionMatrix = camera.combined
+//        r.begin(ShapeRenderer.ShapeType.Line)
         r.identity()
         r.translate(position.x, position.y, 0f)
         r.polygon(shape.vertices)
@@ -44,8 +42,8 @@ open class Item(
 //        r.identity()
 //        r.translate(position.x, position.y, 0f)
 //        r.rect(collisionShape.x, collisionShape.y, collisionShape.width, collisionShape.height)
-        r.end()
-        r.identity()
+//        r.end()
+//        r.identity()
     }
 
     fun destroy() {
