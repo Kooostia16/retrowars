@@ -19,7 +19,7 @@ import java.util.*
 
 fun main() {
     packTextures()
-    generateFonts()
+//    generateFonts()
 }
 
 private val fontPaths = mapOf(

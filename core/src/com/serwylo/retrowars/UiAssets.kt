@@ -200,6 +200,7 @@ class UiAssets(private val locale: Locale) {
             val spaceInvaders = atlas.findRegion("icon_space_invaders")!!
             val tempest = atlas.findRegion("icon_tempest")!!
             val tetris = atlas.findRegion("icon_tetris")!!
+            val gradius = atlas.findRegion("icon_gradius")!!
             val unknown = atlas.findRegion("icon_unknown")!!
         }
 

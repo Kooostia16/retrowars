@@ -7,6 +7,7 @@ import com.serwylo.retrowars.UiAssets
 import com.serwylo.retrowars.core.UnimplementedGameScreen
 import com.serwylo.retrowars.games.asteroids.AsteroidsGameScreen
 import com.serwylo.retrowars.games.breakout.BreakoutGameScreen
+import com.serwylo.retrowars.games.gradius.GradiusGameScreen
 import com.serwylo.retrowars.games.missilecommand.MissileCommandGameScreen
 import com.serwylo.retrowars.games.snake.SnakeGameScreen
 import com.serwylo.retrowars.games.spaceinvaders.SpaceInvadersGameScreen
@@ -93,6 +94,17 @@ object Games {
         { app -> SpaceInvadersGameScreen(app) }
     )
 
+    val gradius = GameDetails(
+        "gradius",
+        isAvailable = true,
+        GradiusSoftController(),
+        "music/wherever_aliens.ogg",
+        "game.space-invaders.intro-message.positive",
+        "game.space-invaders.intro-message.negative",
+        { s -> s.icons.gradius },
+        { app -> GradiusGameScreen(app) }
+    )
+
     val other = UnavailableGameDetails("other")
 
     val all = listOf(
@@ -103,6 +115,7 @@ object Games {
         spaceInvaders,
         tempest,
         tetris,
+        gradius,
         other,
     )
 
